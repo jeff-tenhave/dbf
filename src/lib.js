@@ -26,8 +26,29 @@ module.exports.rpad = function rpad(str, len, char) {
  * @returns {number}
  */
 module.exports.writeField = function writeField(view, fieldLength, str, offset) {
+    const buffer = toBuffer(str);
     for (var i = 0; i < fieldLength; i++) {
-        view.setUint8(offset, str.charCodeAt(i)); offset++;
+        view.setUint8(offset, buffer[i]); offset++;
     }
     return offset;
 };
+
+/**
+ * @param {string} str
+ * @returns {object}
+ */
+function toBuffer(str) {
+    if (typeof TextEncoder === "function") {
+        const encoder = new TextEncoder();
+        return encoder.encode(str);
+    }
+
+    const buffer = new Uint16Array(str.length);
+    for (let i = 0; i < str.length; i++) {
+        buffer[i] = str.charCodeAt(i);
+    }
+
+    return buffer;
+}
+
+module.exports.toBuffer = toBuffer;
